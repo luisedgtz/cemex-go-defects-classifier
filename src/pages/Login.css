@@ -1,0 +1,39 @@
+.main-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.side-left {
+  width: 30%;
+  padding: 3%;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+}
+
+.side-left-logo {
+  width: 25%;
+}
+
+.side-left-illustration {
+  width: 115%;
+  margin-left: -4%;
+  margin-top: 10%;
+}
+
+.side-right {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-form {
+  width: 40%;
+}
+
+.custom-input {
+  border-style: outset;
+  border-radius: 5px;
+}
