@@ -1,11 +1,18 @@
 import "./App.css";
-import Login from "./pages/Login";
+import { IconContext } from "react-icons";
+import LoginScreen from "./screens/LoginScreen";
+import { AuthProvider } from "./navigation/AuthProvider";
+
 
 function App() {
   return (
+  <IconContext.Provider value={{color: "#243B80", size: "20px"}}>
     <div className="App">
-      <Login />
+      <AuthProvider>
+        <LoginScreen/>
+      </AuthProvider>
     </div>
+  </IconContext.Provider>
   );
 }
 

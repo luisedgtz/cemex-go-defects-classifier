@@ -1,3 +1,108 @@
 .App {
   
 }
+
+/* General purpose styles */
+.main-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.color-main {
+    color: #243B80;
+}
+
+.color-secondary {
+    color: #BFC0D0;
+}
+
+h3 {
+    font-size: 28px;
+    margin: 0;
+    font-weight: 700;
+}
+
+h6 {
+    font-size: 15px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.text {
+    color: #2E2E2E;
+}
+
+input {
+    outline: none;
+    border: 0px;    
+    width: 88%;
+    padding-left: 3%;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.input-box {
+    box-shadow: 1px 2px 4px 0px rgba(0,0,0,0.25);
+    -webkit-box-shadow: 1px 2px 4px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 1px 2px 4px 0px rgba(0,0,0,0.25);
+    width: 45%;
+    padding: 1%;
+    border-radius: 15px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.user-input {
+    margin-top: 3%;
+}
+
+.button {
+    background-color: #E42D3F;
+    box-shadow: 0px 0px 5px 1px #EBB5BA;
+    border-radius: 122px;
+    padding: 1%;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    width: 20%;
+    margin-top: 3%;
+}
+
+/* Login screen styles */
+.side-left {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    background-color: #F8F8F8;
+    padding-top: 3%;
+    padding-left: 2%;
+}
+
+.side-left-logo {
+    width: 15%;
+}
+
+.side-left-illustration {
+    width: 115%;
+    margin-top: 10%;
+}
+
+.side-right {
+    width: 70%;
+    background-color: #FFFFFF;
+    padding-top: 11%;
+    padding-left: 4%;
+}
+
+.login-form {
+
+}
