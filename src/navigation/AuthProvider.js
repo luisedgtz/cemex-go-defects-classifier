@@ -5,6 +5,8 @@ import axios from 'axios';
 
 export const AuthContext = createContext();
 
+const baseUrl = 'http://localhost:3000'
+
 export const AuthProvider = ({children}) => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [user, setUser] = useState(null)
@@ -14,20 +16,19 @@ export const AuthProvider = ({children}) => {
             if(!getToken()){
                 return
             }
-
             try{
-                const data = await axios.get("http://localhost:3000/api/getbytoken", {
-                    params:{
-                        "token": getToken() 
-                    }
-                })
-                setUser(data.data[0])
+                console.log("logged in")
+                // const response = await axios.get("http://localhost:3000/api/getbytoken", {
+                //     params:{
+                //         "token": getToken() 
+                //     }
+                // })
+                // setUser(data.data[0])
                 setLoggedIn(true)
             } catch(error){
                 console.log(error)
             }
         }
-
         loadUser()
     },[])
 
@@ -39,24 +40,22 @@ export const AuthProvider = ({children}) => {
                 user,
                 setUser,
                 login: async (email, password)=> {
-                    var response;
-                    await axios.get("http://localhost:3000/users/login",{
-                        params:{
+                    try {
+                        const response = await axios.post(`${baseUrl}/users/login`, {
                             "email": email,
                             "password": password
+                        })
+                        if (response.status=== 200) {
+                            setUser(response.data)
+                            setToken(response.data.token)
+                            setLoggedIn(true);
+                        } else {
+                            throw new Error("an error has occurred")
                         }
-                    }).then(res => {
-                        console.log(res)
-                        // if(res.data.length === 1){
-                        //     setUser(res.data[0])
-                        //     setToken(res.data[0].accessToken)
-                        //     setLoggedIn(true);
-                        //     response = 1
-                        // }else{
-                        //     response = 0
-                        // }
-                    })
-                    return response
+                    } catch (error) {
+                        console.log(error)
+                        alert(error.response.data)
+                    } 
                 },
                 logout: async () =>{
                     setLoggedIn(false)

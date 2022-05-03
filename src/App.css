@@ -22,7 +22,7 @@
 }
 
 h3 {
-    font-size: 28px;
+    font-size: 30px;
     margin: 0;
     font-weight: 700;
 }
@@ -74,35 +74,6 @@ input {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     width: 20%;
-    margin-top: 3%;
-}
-
-/* Login screen styles */
-.side-left {
-    width: 30%;
-    display: flex;
-    flex-direction: column;
-    background-color: #F8F8F8;
-    padding-top: 3%;
-    padding-left: 2%;
-}
-
-.side-left-logo {
-    width: 15%;
-}
-
-.side-left-illustration {
-    width: 115%;
-    margin-top: 10%;
-}
-
-.side-right {
-    width: 70%;
-    background-color: #FFFFFF;
-    padding-top: 11%;
-    padding-left: 4%;
-}
-
-.login-form {
-
+    margin-top: 4%;
+    cursor: pointer;
 }

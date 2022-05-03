@@ -7,13 +7,14 @@ import { FiUser } from "react-icons/fi";
 import { FiEyeOff } from "react-icons/fi";
 import { FiEye } from "react-icons/fi";
 
+import '../css/'
+
 import {AuthContext} from '../navigation/AuthProvider'
 
 const LoginScreen = () => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("pError")
 
   const [passwordVisible, setPasswordVisible] = useState(false)
 
@@ -21,12 +22,7 @@ const LoginScreen = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    console.log("Hola")
-    var response = await login(email, password)
-    if(response === 0){
-      console.log("error")
-      setError("pError-visible")
-  }
+    await login(email, password)
   }
 
   const handlePasswordVisibilityToggle = () => {
@@ -36,8 +32,8 @@ const LoginScreen = () => {
   return (
     <section className='main-container'>
       <div className='side-left'>
-        <img className='side-left-logo' src={CemexLogo}/>
-        <img className='side-left-illustration' src = {LoginIllustration}/>
+        <img alt='' className='side-left-logo' src={CemexLogo}/>
+        <img alt='' className='side-left-illustration' src = {LoginIllustration}/>
       </div>
 
       <div className='side-right'>

@@ -1,5 +1,5 @@
 import React, {useContext} from 'react'
-import { Redirect, Route} from 'react-router'
+import { Navigate, Route} from 'react-router'
 import { AuthContext } from './AuthProvider'
 
 function PrivateRoute ({component: Component, ...rest}) {
@@ -10,7 +10,7 @@ function PrivateRoute ({component: Component, ...rest}) {
         <Route {...rest} render={(props) =>(
             loggedIn === false
             ? <Component {...props}/>
-            : <Redirect to = '/portal/home'/>
+            : <Navigate to = '/portal/home'/>
         )}/>
     )
 }
