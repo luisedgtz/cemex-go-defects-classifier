@@ -12,10 +12,33 @@ import {
 import PrivateRoute from './navigation/PrivateRoute'
 import AuthRoute from './navigation/AuthRoute'
 import PortalScreen from "./screens/PortalScreen";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#243B80",
+      light: "#F5F5F5"
+
+    },
+    secondary: {
+      main: "#E42D3F"
+    },
+    text: {
+      primary: "#243B80",
+      secondary: "#BFC0D0"
+    },
+  },
+  typography: {
+    fontFamily: [
+      "'Montserrat', sans-serif"
+    ]
+  }
+});
 
 function App() {
   return (
-  <IconContext.Provider value={{color: "#243B80", size: "20px"}}>
+    <ThemeProvider theme={theme}>
     <div className="App">
       <AuthProvider>
         <Router>
@@ -26,7 +49,7 @@ function App() {
         </Router>
       </AuthProvider>
     </div>
-  </IconContext.Provider>
+    </ThemeProvider>
   );
 }
 

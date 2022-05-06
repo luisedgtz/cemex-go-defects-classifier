@@ -2,6 +2,7 @@ import React, {createContext,useState,useEffect} from 'react'
 import {setToken, getToken, deleteToken} from './authHelpers'
 
 import axios from 'axios';
+import { Alert } from '@mui/material';
 
 export const AuthContext = createContext();
 
@@ -49,12 +50,12 @@ export const AuthProvider = ({children}) => {
                             setUser(response.data)
                             setToken(response.data.token)
                             setLoggedIn(true);
+                            return {error: 0, message: "success"}
                         } else {
                             throw new Error("an error has occurred")
                         }
                     } catch (error) {
-                        console.log(error)
-                        alert(error.response.data)
+                        return {error: 1, message: error.response.data}
                     } 
                 },
                 logout: async () =>{
