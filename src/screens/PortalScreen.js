@@ -1,12 +1,13 @@
 import { CssBaseline, Grid } from '@mui/material'
 import React, { useContext, useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { AuthContext } from '../navigation/AuthProvider'
 import NavBar from '../navigation/NavBar'
 import Classifier from './Classifier'
 import History from './History'
 
 const PortalScreen = () => {
-    // const {user} = useContext(AuthContext)
+    const {user, loggedIn} = useContext(AuthContext)
     const [navIndex, setNavIndex] = useState(1)
 
     const handleNavIndexChange = (index) => {

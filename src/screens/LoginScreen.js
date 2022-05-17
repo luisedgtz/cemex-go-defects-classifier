@@ -9,8 +9,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { Alert, Box, Button, CssBaseline, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, Snackbar, Typography } from '@mui/material';
 import { Lock, Person } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const LoginScreen = () => {
+
+  let navigate = useNavigate();
 
   const [values, setValues] = useState({
     email: '',
@@ -37,6 +40,7 @@ const LoginScreen = () => {
       setValues({...values, open: true, error: response.message})
     } else {
       setValues({...values, open: false})
+      navigate('/portal', {replace: true})
     }
   }
 
@@ -79,7 +83,7 @@ const LoginScreen = () => {
             }}
           >
             <img width={80} src={CemexLogo}/>
-            <Typography sx={{mt: 5}} fontWeight="bold" component="h1" variant="h5">Welcome to CEMEX GO Classifier!</Typography>
+            <Typography sx={{mt: 5}} fontWeight="bold" component="h1" variant="h5">Welcome to CEMEX GO Defects Classifier!</Typography>
             <Typography color="text.secondary" fontWeight="500" component="h2" variant="h6">Login with your assigned credentials</Typography>
             
             <Box component="form" noValidate onSubmit={handleLogin} sx={{mt: 3, width: "100%"}}>

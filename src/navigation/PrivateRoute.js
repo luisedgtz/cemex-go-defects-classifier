@@ -2,11 +2,15 @@ import React, {useContext} from 'react'
 import { Navigate, Route} from 'react-router'
 import { AuthContext } from './AuthProvider'
 
-function PrivateRoute ({component: Component, ...rest}) {
+function PrivateRoute ({children}) {
 
     const {loggedIn, user} = useContext(AuthContext)    
 
-    return loggedIn ? <Component/> : <Navigate to='/'/>
+    if (!user) {
+        return <Navigate to="/login" replace/>
+    }
+
+    return children
 }
 
 export default PrivateRoute

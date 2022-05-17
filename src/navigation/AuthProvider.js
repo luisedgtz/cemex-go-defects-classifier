@@ -24,7 +24,7 @@ export const AuthProvider = ({children}) => {
                 //         "token": getToken() 
                 //     }
                 // })
-                // setUser(data.data[0])
+                setUser({id: "1", name: "Luis"})
                 setLoggedIn(true)
             } catch(error){
                 console.log(error)
