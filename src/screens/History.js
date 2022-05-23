@@ -249,7 +249,7 @@ const History = () => {
 
 
     return (
-        <Grid item sx={{pt: 10, px: 10}} md={10.5}>
+        <Grid item sx={{pt: 10, px: 10}} md={10}>
             <Typography component="h1" variant='h4' fontWeight="bold">Defects History</Typography>
 
             <Box sx={{mt: 5}} display="flex" alignItems="center">

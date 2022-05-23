@@ -22,10 +22,10 @@ const NavBar = ({ handleNavIndexChange, admin}) => {
   }
 
   return (
-    <Grid display="flex" flexDirection="column" justifyContent="space-between" md={1.5} sx={{ bgcolor: 'primary.main'}}>
+    <Grid item display="flex" flexDirection="column" justifyContent="space-between" md={2} sx={{ bgcolor: 'primary.main'}}>
       <Box>
-        <img style={{marginLeft: 10, marginTop: 25}} width={80} src={CemexLogo}/>
-        <List component="nav" sx={{mt: 5}}>
+        <img style={{marginLeft: 20, marginTop: 25}} width={80} src={CemexLogo}/>
+        <List component="nav" sx={{mt: 3}}>
           <Box bgcolor={index === 1 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3}}>
             <ListItemButton onClick={()=>handleChange(1)} sx={{py: 2, borderRadius: 3}}>
               <ListItemIcon>

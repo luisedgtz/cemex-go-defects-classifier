@@ -18,14 +18,15 @@ export const AuthProvider = ({children}) => {
                 return
             }
             try{
-                console.log("logged in")
-                // const response = await axios.get("http://localhost:3000/api/getbytoken", {
-                //     params:{
-                //         "token": getToken() 
-                //     }
-                // })
-                setUser({id: "1", name: "Luis"})
-                setLoggedIn(true)
+                const response = await axios.get(`${baseUrl}/users/getuserbytoken`, {
+                    params: {
+                        "token": getToken()
+                    }
+                })
+                if (response.status === 200) {
+                    setUser(response.data)
+                    setLoggedIn(true)
+                }
             } catch(error){
                 console.log(error)
             }
