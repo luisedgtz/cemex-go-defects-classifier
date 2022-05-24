@@ -4,14 +4,19 @@ import { Box, fontWeight } from '@mui/system'
 import React, {useState} from 'react'
 import Dropzone from 'react-dropzone'
 import * as XLSX from 'xlsx'
+import axios from 'axios';
 
 const Classifier = () => {
+
+    const baseUrl = 'http://localhost:3000'
 
     const [clusters, setClusters] = useState(1);
     const [file, setFile] = useState(null);
 
     const [columns, setColumns] = useState([]);
     const [data, setData] = useState([]);
+
+    const [defects, setDefects] = useState([]);
 
     const handleChange = (event) => {
         setClusters(event.target.value);
@@ -33,9 +38,38 @@ const Classifier = () => {
             /* Convert array of arrays */
             const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
             let description = data.map(a => a[10]);
-            console.log(description)
+            
+            
+            
+            const items = description.slice(0, 50)
+
+
+            setDefects(items);
+            setData(data);
+
+            //console.log(description)
         };
         reader.readAsBinaryString(uploadedFile);
+    }
+
+    async function handleProcess() {
+
+        console.log(defects)
+        
+        try{
+            const response = await axios.post(`${baseUrl}/reports/script`, { 
+                "defects_array": defects
+                
+            })
+            if (response.status === 200) {
+                console.log(response.data)
+            }
+        } catch(error){
+            console.log(error)
+        }
+        
+        
+      //console.log("It worked")
     }
 
     return (
@@ -77,7 +111,7 @@ const Classifier = () => {
                             </TextField>
                         </Box>
 
-                        <Button sx={{margin: 0}} color="secondary" variant="contained">Process</Button>
+                        <Button sx={{margin: 0}} color="secondary" variant="contained" onClick={handleProcess}>Process</Button>
                     </Box>
 
                 </Box>      
