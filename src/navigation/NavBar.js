@@ -22,33 +22,27 @@ const NavBar = ({ handleNavIndexChange, admin}) => {
   }
 
   return (
-    <Grid item display="flex" flexDirection="column" justifyContent="space-between" md={2} sx={{ bgcolor: 'primary.main'}}>
+    <Grid item display="flex" flexDirection="column" justifyContent="space-between" sx={{ bgcolor: 'primary.main'}}>
       <Box>
         <img style={{marginLeft: 20, marginTop: 25}} width={80} src={CemexLogo}/>
         <List component="nav" sx={{mt: 3}}>
           <Box bgcolor={index === 1 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3}}>
             <ListItemButton onClick={()=>handleChange(1)} sx={{py: 2, borderRadius: 3}}>
-              <ListItemIcon>
-                <PieChart sx={{color: "white"}}/>
-              </ListItemIcon>
+              <PieChart sx={{color: "white", mr: 2}}/>
               <ListItemText sx={{color: "white"}} primary="Classifier" />
             </ListItemButton>
           </Box>
-          <Box bgcolor={index === 2 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3, my: 5}}>
+          <Box bgcolor={index === 2 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3, my: 3}}>
             <ListItemButton onClick={()=>handleChange(2)} sx={{py: 2, borderRadius: 3}}>
-              <ListItemIcon>
-                <History sx={{color: "white"}}/>
-              </ListItemIcon>
-              <ListItemText sx={{color: "white"}} primary="Defects History" />
+              <History sx={{color: "white", mr: 2}}/>
+              <ListItemText sx={{color: "white"}} primary="Reports" />
             </ListItemButton>
           </Box>
           {
             admin ? 
-            <Box bgcolor={index === 3 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3, my: 5}}>
+            <Box bgcolor={index === 3 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3, my: 3}}>
               <ListItemButton onClick={()=>handleChange(3)} sx={{py: 2, borderRadius: 3}}>
-                <ListItemIcon>
-                  <Person sx={{color: "white"}}/>
-                </ListItemIcon>
+                <Person sx={{color: "white", mr: 2}}/>
                 <ListItemText sx={{color: "white"}} primary="Users" />
               </ListItemButton>
             </Box>
