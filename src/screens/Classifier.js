@@ -131,7 +131,8 @@ const Classifier = () => {
                 user: user,
                 numGroups: groupsArray.length,
                 labels: labels,
-                groups: groupsArray
+                groups: groupsArray,
+                pieData: pieData
             })
 
             if (response.status === 201) {
