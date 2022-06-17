@@ -88,7 +88,7 @@ const LoginScreen = () => {
             
             <Box component="form" noValidate onSubmit={handleLogin} sx={{mt: 3, width: "100%"}}>
               <FormControl required sx={{mt: 2, width: "100%" }} variant="outlined">
-              <InputLabel htmlFor="email">Email Address</InputLabel>
+                <InputLabel htmlFor="email">Email Address</InputLabel>
                 <OutlinedInput
                   onChange={handleChange('email')}
                   value={values.email}

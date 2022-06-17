@@ -1,65 +1,97 @@
-import { History, Logout, Person, PieChart } from '@mui/icons-material'
-import CemexLogo from "../assets/cemex_logo.png";
-import { Button, Grid, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import { HistoryRounded, MenuRounded, PersonRounded, PieChartRounded } from '@mui/icons-material'
+import { Alert, Button, Grid, List, ListItemButton, ListItemText, Paper, Snackbar, Typography } from '@mui/material'
+import CemexLogo from '../assets/cemex_logo.png'
 import { Box } from '@mui/system'
 import React, {useContext, useState} from 'react'
 import { AuthContext } from './AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = ({ handleNavIndexChange, admin}) => {
-  const {logout} = useContext(AuthContext)
   const [index, setIndex] = useState(1);
-  let navigate = useNavigate()
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login", {replace: true})
-  }
+  const {savedReport, setSavedReport, activeStep, setActiveStep, user} = useContext(AuthContext)
 
+  const [continueIndex, setContinueIndex] = useState(0)
+  const [open, setOpen] = useState(false)
+  const [open2, setOpen2] = useState(false)
+  
   const handleChange = (index) => {
-    setIndex(index)
-    handleNavIndexChange(index)
+    setContinueIndex(index)
+    if (!savedReport && (activeStep === 1)) {
+      setOpen(true)
+    } else if (!savedReport && (activeStep === 2)) {
+      setOpen2(true)
+      setOpen(false)
+    } else {
+      setIndex(index)
+      handleNavIndexChange(index)
+      setActiveStep(0)
+    }
   }
+
+  const handleContinue = () => {
+    setIndex(continueIndex)
+    handleNavIndexChange(continueIndex)
+    setActiveStep(0)
+    setOpen2(false)
+  }
+
+  const continueSave = (
+    <Button onClick={()=>handleContinue()} size="small">
+      CONTINUE
+    </Button>
+  )
 
   return (
-    <Grid item display="flex" flexDirection="column" justifyContent="space-between" sx={{ bgcolor: 'primary.main'}}>
-      <Box>
-        <img style={{marginLeft: 20, marginTop: 25}} width={80} src={CemexLogo}/>
-        <List component="nav" sx={{mt: 3}}>
-          <Box bgcolor={index === 1 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3}}>
-            <ListItemButton onClick={()=>handleChange(1)} sx={{py: 2, borderRadius: 3}}>
-              <PieChart sx={{color: "white", mr: 2}}/>
-              <ListItemText sx={{color: "white"}} primary="Classifier" />
+    <Box component="nav" width="14vw">
+      <Box zIndex={1200} flexDirection="column" alignItems="center" display="flex" sx={{overflowY: "auto"}} width="14vw" top="60px" maxHeight="calc(100vh - 68px)" position="fixed">
+
+        <Box bgcolor={index === 1 ?  "primary.light" :  "white" } sx={{borderRadius: "10px", my: 1, width: "90%"}}>
+          <ListItemButton onClick={()=>handleChange(1)} sx={{py: 1.5, borderRadius: "10px"}}>
+            <PieChartRounded fontSize='small' sx={{color: "primary.main", mx: 2}}/>
+            <Typography fontSize="15px" sx={{color: "primary.main"}}>Classifier</Typography>
+          </ListItemButton>
+        </Box>
+
+        <Box bgcolor={index === 2 ?  "primary.light" :  "white" } sx={{borderRadius: "10px", my: 1, width: "90%"}}>
+          <ListItemButton onClick={()=>handleChange(2)}  sx={{py: 1.5, borderRadius: "10px"}}>
+            <HistoryRounded fontSize='small' sx={{color: "primary.main", mx: 2}}/>
+            <Typography fontSize="15px" sx={{color: "primary.main"}}>Reports</Typography>
+            </ListItemButton>
+        </Box>
+
+        {
+          user.role ?
+          <Box bgcolor={index === 3 ?  "primary.light" :  "white" } sx={{borderRadius: "10px", my: 1, width: "90%"}}>
+            <ListItemButton onClick={()=>handleChange(3)} sx={{py: 1.5, borderRadius: "10px"}}>
+              <PersonRounded fontSize='small' sx={{color: "primary.main", mx: 2}}/>
+              <Typography fontSize="15px" sx={{color: "primary.main"}}>Users</Typography>
             </ListItemButton>
           </Box>
-          <Box bgcolor={index === 2 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3, my: 3}}>
-            <ListItemButton onClick={()=>handleChange(2)} sx={{py: 2, borderRadius: 3}}>
-              <History sx={{color: "white", mr: 2}}/>
-              <ListItemText sx={{color: "white"}} primary="Reports" />
-            </ListItemButton>
-          </Box>
-          {
-            admin ? 
-            <Box bgcolor={index === 3 ?  "#16244F" :  "#475B95" } sx={{mx: 1.5, borderRadius: 3, my: 3}}>
-              <ListItemButton onClick={()=>handleChange(3)} sx={{py: 2, borderRadius: 3}}>
-                <Person sx={{color: "white", mr: 2}}/>
-                <ListItemText sx={{color: "white"}} primary="Users" />
-              </ListItemButton>
-            </Box>
-            :
-            null
-          }
-        </List>
+          :
+          null
+        }
       </Box>
 
-      <Button
-        onClick={()=>handleLogout()}
-        color="info"
-        variant='text'
-        startIcon={<Logout/>}>
-          Log out
-      </Button>
-    </Grid>
+      <Snackbar
+        anchorOrigin={{vertical: "top", horizontal: "center"}}
+        open={open}
+        autoHideDuration={6000}
+        onClose={()=>setOpen(false)}
+      >
+        <Alert onClose={()=>setOpen(false)} severity="warning" sx={{width: "100%"}}>We're processing your file</Alert>
+      </Snackbar>
+
+
+      <Snackbar
+        anchorOrigin={{vertical: "top", horizontal: "center"}}
+        open={open2}
+        autoHideDuration={6000}
+        onClose={()=>setOpen2(false)}
+      >
+        <Alert action={continueSave} onClose={()=>setOpen2(false)} severity="warning" sx={{width: "100%"}}>Your file is not saved yet</Alert>
+      </Snackbar>
+    </Box>
   )
 }
 

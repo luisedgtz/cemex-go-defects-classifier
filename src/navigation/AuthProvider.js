@@ -2,7 +2,6 @@ import React, {createContext,useState,useEffect} from 'react'
 import {setToken, getToken, deleteToken} from './authHelpers'
 
 import axios from 'axios';
-import { Alert } from '@mui/material';
 
 export const AuthContext = createContext();
 
@@ -11,6 +10,8 @@ const baseUrl = 'http://localhost:3000'
 export const AuthProvider = ({children}) => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [user, setUser] = useState(null)
+    const [savedReport, setSavedReport] = useState(false)
+    const [activeStep, setActiveStep] = useState(0)
     
     useEffect(() => {
         async function loadUser(){
@@ -41,6 +42,10 @@ export const AuthProvider = ({children}) => {
                 setLoggedIn,
                 user,
                 setUser,
+                savedReport,
+                setSavedReport,
+                activeStep,
+                setActiveStep,
                 login: async (email, password)=> {
                     try {
                         const response = await axios.post(`${baseUrl}/users/login`, {
@@ -64,7 +69,6 @@ export const AuthProvider = ({children}) => {
                     setUser(null)
                     deleteToken()
                 }
-                
             }}
         >
             {children}

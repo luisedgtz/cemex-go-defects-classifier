@@ -1,377 +1,440 @@
-import { Delete, FilterListOff } from '@mui/icons-material';
-import { Box, Checkbox, Grid, IconButton, InputLabel, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Toolbar, Tooltip, Typography } from '@mui/material'
-import { visuallyHidden } from '@mui/utils';
-import { DatePicker, LocalizationProvider} from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import React from 'react'
+import { Avatar, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListItemIcon, Menu, MenuItem, OutlinedInput, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Tooltip, Typography } from '@mui/material'
+import { Box } from '@mui/system'
+import { visuallyHidden } from '@mui/utils'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { FileDownloadRounded, FilterAltOffRounded, FilterListOff, MoreVert, Person, SearchRounded } from '@mui/icons-material'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns' 
 
-const History = () => {
-
-    function createData(id, author, defectsNum, comments) {
-        return {
-          id,
-          author,
-          defectsNum,
-          comments,
-        };
+function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+        return -1
     }
-
-    const rows = [
-        createData(101, 'Luis Gtz', 203, "Loremp ipsum dolor amet..."),
-        createData(102, 'Luis Gtz', 202, "Loremp ipsum dolor amet..."),
-        createData(103, 'Luis Gtz', 120, "Loremp ipsum dolor amet..."),
-        createData(104, 'Luis Gtz', 198, "Loremp ipsum dolor amet..."),
-        createData(105, 'Luis Gtz', 283, "Loremp ipsum dolor amet..."),
-        createData(106, 'Luis Gtz', 257, "Loremp ipsum dolor amet..."),
-        createData(107, 'Luis Gtz', 438, "Loremp ipsum dolor amet..."),
-        createData(108, 'Luis Gtz', 201, "Loremp ipsum dolor amet..."),
-        createData(109, 'Luis Gtz', 867, "Loremp ipsum dolor amet..."),
-        createData(110, 'Luis Gtz', 109, "Loremp ipsum dolor amet..."),
-        createData(111, 'Luis Gtz', 276, "Loremp ipsum dolor amet..."),
-    ];
-
-    function descendingComparator(a, b, orderBy) {
-        if (b[orderBy] < a[orderBy]) {
-          return -1;
-        }
-        if (b[orderBy] > a[orderBy]) {
-          return 1;
-        }
-        return 0;
+    if (b[orderBy] > a[orderBy]) {
+        return 1
     }
+    return 0;
+}
 
-    function getComparator(order, orderBy) {
-        return order === 'desc'
-          ? (a, b) => descendingComparator(a, b, orderBy)
-          : (a, b) => -descendingComparator(a, b, orderBy);
-    }
+function getComparator(order, orderBy) {
+    return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy)
+}
 
-    function stableSort(array, comparator) {
-        const stabilizedThis = array.map((el, index) => [el, index]);
-        stabilizedThis.sort((a, b) => {
-          const order = comparator(a[0], b[0]);
-          if (order !== 0) {
+function stableSort(array, comparator) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+        const order = comparator(a[0], b[0]);
+        if (order !== 0) {
             return order;
-          }
-          return a[1] - b[1];
-        });
-        return stabilizedThis.map((el) => el[0]);
-    }
-
-    const headCells = [
-        {
-          id: 'id',
-          numeric: false,
-          disablePadding: true,
-          label: 'ID',
-        },
-        {
-          id: 'author',
-          numeric: false,
-          disablePadding: false,
-          label: 'Author',
-        },
-        {
-          id: 'defectsNum',
-          numeric: false,
-          disablePadding: false,
-          label: '#Defects',
-        },
-        {
-          id: 'comments',
-          numeric: false,
-          disablePadding: false,
-          label: 'Comments',
-        },
-    ];
-
-    function EnhancedTableHead(props) {
-        const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-          props;
-        const createSortHandler = (property) => (event) => {
-          onRequestSort(event, property);
-        };
-      
-        return (
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  indeterminate={numSelected > 0 && numSelected < rowCount}
-                  checked={rowCount > 0 && numSelected === rowCount}
-                  onChange={onSelectAllClick}
-                  inputProps={{
-                    'aria-label': 'select all desserts',
-                  }}
-                />
-              </TableCell>
-              {headCells.map((headCell) => (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}
-                >
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                  >
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                      </Box>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-        );
-    }
-
-    const EnhancedTableToolbar = (props) => {
-        const { numSelected } = props;
-      
-        return (
-          <Toolbar
-            sx={{
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
-          >
-            {numSelected > 0 ? (
-              <Typography
-                sx={{ flex: '1 1 100%' }}
-                color="inherit"
-                variant="subtitle1"
-                component="div"
-              >
-                {numSelected} selected
-              </Typography>
-            ) : (
-              <Typography
-                sx={{ flex: '1 1 100%' }}
-                variant="h6"
-                id="tableTitle"
-                component="div"
-              >
-                Processed defects
-              </Typography>
-            )}
-      
-            {numSelected > 0 ? (
-              <Tooltip title="Delete">
-                <IconButton>
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Tooltip title="Filter list">
-                <IconButton>
-                  <FilterListOff />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Toolbar>
-        );
-    };
-
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-    const handleRequestSort = (event, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-        const newSelecteds = rows.map((n) => n.name);
-        setSelected(newSelecteds);
-        return;
-    }
-    setSelected([]);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1),
-            );
         }
+        return a[1] - b[1]
+    })
+    return stabilizedThis.map((el) => el[0]);
+}
 
-        setSelected(newSelected);
-    };
+const headCells = [
+    {
+        id: 'id',
+        numeric: false,
+        disablePadding: true,
+        label: 'Report ID'
+    },
+    {
+        id: 'author',
+        numeric: false,
+        disablePaddig: true,
+        label: 'Author'
+    },
+    {
+        id: 'defects',
+        numeric: true,
+        disablePaddig: true,
+        label: "# Defects"
+    },
+    {
+        id: 'groups',
+        numeric: true,
+        disablePaddig: true,
+        label: "# Groups"
+    },
+    {
+        id: 'date',
+        numeric: false,
+        disablePaddig: true,
+        label: "Date created"
+    }
+]
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-    };
-    
-    const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-    };
-
-    const isSelected = (name) => selected.indexOf(name) !== -1;
-
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-    const [date1, setDate1] = React.useState(null);
-    const [date2, setDate2] = React.useState(null);
-
-    const [department, setDepartment] = React.useState("sales");
-    const handleChange = (event) => {
-        setDepartment(event.target.value);
-    };
-
+function EnhancedTableHead(props) {
+    const {order, orderBy, onRequestSort} = props
+    const createSortHandler = (property) => (event) => {
+        onRequestSort(event, property)
+    }
 
     return (
-        <Grid item sx={{pt: 10, px: 10}} md={10}>
-            <Typography component="h1" variant='h4' fontWeight="bold">Defects History</Typography>
+        <TableHead>
+            <TableRow>
+                {headCells.map((headCell, index) => (
+                    <TableCell key={index}>
+                        <TableSortLabel
+                            active={orderBy === headCell.id}
+                            direction={orderBy === headCell.id ? order : 'asc'}
+                            onClick={createSortHandler(headCell.id)}
+                        >
+                            {headCell.label}
+                            {orderBy === headCell.id ? (
+                                <Box component="span" sx={visuallyHidden}>
+                                    {order === "desc" ? 'sorted descending' : 'sorted ascending'}
+                                </Box>
+                            ) : null}
+                        </TableSortLabel>
+                    </TableCell>
+                ))}
+            </TableRow>
+        </TableHead>
+    )
+}
 
-            <Box sx={{mt: 5}} display="flex" alignItems="center">
-                <InputLabel sx={{mr: 3}} color='text'>From date:</InputLabel>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                        label="Select date"
-                        value={date1}
-                        onChange={(newValue) => {
-                            setDate1(newValue);
-                        }}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
 
-                <InputLabel sx={{mx: 3}} color='text'>to date:</InputLabel>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                        label="Select date"
-                        value={date1}
-                        onChange={(newValue) => {
-                            setDate1(newValue);
-                        }}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
 
-                <InputLabel sx={{mx: 3}} color='text'>department:</InputLabel>
-                <TextField
-                    id="clusters"
-                    select
-                    label=""
-                    value={department}
-                    onChange={handleChange}
-                >
-                        <MenuItem key={1} value={"sales"}>sales</MenuItem>
-                        <MenuItem key={2} value={"human resources"}>human resources</MenuItem>
-                        <MenuItem key={3} value={"tech"}>tech</MenuItem>
-                </TextField>
+const History = () => {
+    const baseUrl = 'http://localhost:3000'
+    const [order, setOrder] = useState('asc')
+    const [orderBy, setOrderBy] = useState('name')
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(7)
+
+    const [rows, setRows] = useState([])
+
+    const [date1, setDate1] = useState(null)
+    const [date2, setDate2] = useState(null)
+    const [username, setUsername] = useState("")
+
+
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+
+    const handleRequestSort = (event, property) => {
+        const isAsc = orderBy === property && order === 'asc'
+        setOrder(isAsc ? 'desc' : 'asc')
+        setOrderBy(property)
+    }
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage)
+    }
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10))
+        setPage(0)
+    }
+
+    const getFormatDate = (dateString) => {
+        var date = new Date(dateString).toLocaleDateString()
+        return date
+    }
+
+    const getNumberDefects = (arr) => {
+        var number = 0;
+        for (var i = 0; i < arr.length; i++) {
+            number = number + arr[i].length
+        }
+        return number
+    }
+
+    const handleDownloadCSV = (id) => {
+        console.log(id)
+    }
+
+    const handleSearchByUserDate = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/reports/byUserDate` , {
+                params: {
+                    username: username,
+                    minDate: date1,
+                    maxDate: date2
+                }
+            })
+            if (response.status === 200) {
+                setRows(response.data)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const handleSearchByUser = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/reports/byUser`, {
+                params: {
+                    username: username
+                }
+            })
+            if (response.status === 200) {
+                setRows(response.data)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const handleSearchByDate = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/reports/byDate`, {
+                params : {
+                    minDate: date1,
+                    maxDate: date2
+                }
+            })
+            if (response.status === 200) {
+                setRows(response.data)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const handleSearch = () => {
+
+        if (date1 > date2) {
+            console.log("date1 es mayor")
+            return
+        }
+
+        if (username === "" && date1 === null && date2 === null) {
+            console.log("Fill something")
+            return
+        } 
+
+        if (username !== "" && date1 !== null && date2 !== null) {
+            handleSearchByUserDate()
+        } else if (date1 !== null && date2 !== null) {
+            handleSearchByDate()
+        } else if(username !== "") {
+            setDate1(null)
+            setDate2(null)
+            handleSearchByUser()
+        } else {
+            console.log("Fill something")
+        }
+    }
+
+    const handleClearSearch = () => {
+        handleGetReports()
+        setDate1(null)
+        setDate2(null)
+        setUsername("")
+    }
+
+    const handleClearFilters = () => {
+        setDate1(null)
+        setDate2(null)
+        setUsername("")
+    }
+
+    const handleChangeUsername = (e) => {
+        setUsername(e.target.value)
+    }
+
+    const handleGetReports = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/reports/all`)
+            if (response.status === 200) {
+                setRows(response.data)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    
+    useEffect(()=> {
+        handleGetReports()
+    },[])
+
+    return (
+        <Grid item>
+            <Box bgcolor="white" sx={{border: "1px solid #DDE0E3"}} borderRadius="8px">
+                <Typography component="h1" fontSize="20px" p={2} fontWeight="bold">Reports</Typography>
             </Box>
 
-            <Box sx={{ width: '100%' , mt: 5}}>
-                <Paper sx={{ width: '100%', mb: 2 }}>
-                    <EnhancedTableToolbar numSelected={selected.length} />
-                    <TableContainer>
+            <Box display="flex" alignItems="center" justifyContent="space-between" bgcolor="white" sx={{border: "1px solid #DDE0E3", borderRadius: "8px", p: 2, overflowX: "scroll", mt: 3}}>
+                <Box alignItems="center" display="flex" width="70%" justifyContent="space-between">
+                    <Box display="flex" alignItems="center">
+                        <InputLabel sx={{mr: 2}}>From date:</InputLabel>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                label="Select date"
+                                value={date1}
+                                onChange={(newValue) => {
+                                    setDate1(newValue)
+                                }}
+                                renderInput={(params) => <TextField {...params}/>}
+                            />
+                        </LocalizationProvider>
+                    </Box>
+
+                    <Box display="flex" alignItems="center">
+                        <InputLabel sx={{mr: 2}}>To date:</InputLabel>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                label="Select date"
+                                value={date2}
+                                onChange={(newValue) => {
+                                    setDate2(newValue)
+                                }}
+                                renderInput={(params) => <TextField {...params}/>}
+                            />
+                        </LocalizationProvider>
+                    </Box>
+
+                    <Box sx={{width: "30%"}}>
+                        <FormControl sx={{width: "100%"}} variant="outlined">
+                            <InputLabel html="username">Search by username</InputLabel>
+                            <OutlinedInput
+                                onChange={handleChangeUsername}
+                                value={username}
+                                name="username"
+                                id="username"
+                                label="Search by username"
+                            />
+                        </FormControl>
+                    </Box>
+
+                    <Tooltip title="Clear filters">
+                        <IconButton onClick={handleClearFilters} sx={{width: 40, height: 40}}>
+                            <FilterListOff/>
+                        </IconButton>
+                    </Tooltip>
+
+                </Box>
+
+
+                <Box display="flex">
+                    <Tooltip title="Clear search">
+                        <IconButton onClick={handleClearSearch} sx={{mr: 2}}>
+                            <FilterAltOffRounded/>
+                        </IconButton>
+                    </Tooltip>
+
+
+                    <Button onClick={handleSearch} size='large' variant="contained" startIcon={<SearchRounded/>}>
+                        Search
+                    </Button>
+                </Box>
+
+            </Box>
+
+            <Box bgcolor="white" sx={{border: "1px solid #DDE0E3", mt: 3, overflow: "hidden"}} borderRadius="8px">
+                <TableContainer sx={{maxHeight: 570}}>
                     <Table
-                        sx={{ minWidth: 750 }}
-                        aria-labelledby="tableTitle"
-                        size={dense ? 'small' : 'medium'}
+                        stickyHeader
+                        sx={{width: "100%"}}
+                        size="medium"
                     >
                         <EnhancedTableHead
-                        numSelected={selected.length}
-                        order={order}
-                        orderBy={orderBy}
-                        onSelectAllClick={handleSelectAllClick}
-                        onRequestSort={handleRequestSort}
-                        rowCount={rows.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onRequestSort={handleRequestSort}
                         />
                         <TableBody>
-                        {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                            rows.slice().sort(getComparator(order, orderBy)) */}
-                        {stableSort(rows, getComparator(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                            const isItemSelected = isSelected(row.name);
-                            const labelId = `enhanced-table-checkbox-${index}`;
+                            {stableSort(rows, getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => (
+                                        <TableRow
+                                            hover
+                                            key={row._id}
+                                            tabIndex={-1}
+                                        >
+                                            <TableCell
+                                                component="th"
+                                                id={row._id}
+                                                scope="row"
+                                                padding="normal"
 
-                            return (
-                                <TableRow
-                                hover
-                                onClick={(event) => handleClick(event, row.name)}
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={row.name}
-                                selected={isItemSelected}
-                                >
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                    color="primary"
-                                    checked={isItemSelected}
-                                    inputProps={{
-                                        'aria-labelledby': labelId,
-                                    }}
-                                    />
-                                </TableCell>
-                                <TableCell
-                                    component="th"
-                                    id={labelId}
-                                    scope="row"
-                                    padding="none"
-                                >
-                                    {row.id}
-                                </TableCell>
-                                <TableCell>{row.author}</TableCell>
-                                <TableCell>{row.defectsNum}</TableCell>
-                                <TableCell>{row.comments}</TableCell>
-                                </TableRow>
-                            );
-                            })}
-                        {emptyRows > 0 && (
-                            <TableRow
-                            style={{
-                                height: (dense ? 33 : 53) * emptyRows,
-                            }}
-                            >
-                            <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
+                                            >
+                                                {row.reportId}
+                                            </TableCell>
+                                            <TableCell>{row.createdBy}</TableCell>
+                                            <TableCell>{getNumberDefects(row.groups)}</TableCell>
+                                            <TableCell>{row.numGroups}</TableCell>
+                                            <TableCell>
+                                                <Box alignItems="center" display="flex" justifyContent="space-between">
+                                                    <Typography>{getFormatDate(row.createdAt)}</Typography>
+                                                    <IconButton onClick={handleClick}>
+                                                        <MoreVert/>
+                                                    </IconButton>
+                                                    <Menu
+                                                      anchorEl={anchorEl}
+                                                      id="more-menu"
+                                                      open={open}
+                                                      onClose={handleClose}
+                                                      onClick={handleClose}
+                                                      PaperProps={{
+                                                          elevation: 0,
+                                                          sx: {
+                                                              overflow: 'visible',
+                                                              filter: 'drop-shadow(0px 2px 5px rgba(0,0,0,0.08))',
+                                                              mt: 1.5,
+                                                              '& .MuiAvatar-root': {
+                                                              width: 32,
+                                                              height: 32,
+                                                              ml: -0.5,
+                                                              mr: 1,
+                                                              },
+                                                              '&:before': {
+                                                              content: '""',
+                                                              display: 'block',
+                                                              position: 'absolute',
+                                                              top: 0,
+                                                              right: 14,
+                                                              width: 10,
+                                                              height: 10,
+                                                              bgcolor: 'background.paper',
+                                                              transform: 'translateY(-50%) rotate(45deg)',
+                                                              zIndex: 0,
+                                                              },
+                                                          }
+                                                      }}
+                                                      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                                                      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                                                    >
+                                                        <MenuItem onClick={()=>handleDownloadCSV(row._id)}>
+                                                            <ListItemIcon>
+                                                                <FileDownloadRounded color='primary' fontSize='small'/>
+                                                            </ListItemIcon>
+                                                            Download CSV
+                                                        </MenuItem>
+                                                    </Menu>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                )
+                            }
                         </TableBody>
                     </Table>
-                    </TableContainer>
-                    <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[7, 15, 25]}
                     component="div"
                     count={rows.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
+                />
             </Box>
         </Grid>
     )
